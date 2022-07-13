@@ -11,6 +11,12 @@
   - Glassfish,  SQLServer, Netbean 8, JSTL, JSP/Servlet, GitLab, JQuery, Bootstrap 
   ### Role/Main Tasks:
   - Member/Backend Developer
+  ### Members join in this project:
+  - Nguyen The Vinh
+  - Ha Huy Thai
+  - Dinh Xuan Hoang
+  - Nguyen Huy Long
+  - Nguyen Duc Nam
 # Main Features:
  ## Common:
  ### Homepage:

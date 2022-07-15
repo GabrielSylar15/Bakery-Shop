@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Customer/Account/ResetPasswordController.java</file>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/web/View/public/header.jsp</file>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/web/View/Customer/Account/ResetPassword.jsp</file>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/web/View/public/header2.jsp</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Common/ProcessingUploadFile.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Customer/Order/OrderInformationController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/DAO/FeedbackDAO.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Marketing/Post/MKTInsertPostController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/web/View/Customer/Order/OrderInformation.jsp</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Model/Order_Details.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/web/View/Customer/Feedback/Feedback.jsp</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Customer/Feedback/FeedbackController.java</file>
         </group>
     </open-files>
 </project-private>

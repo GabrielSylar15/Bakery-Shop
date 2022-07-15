@@ -12,6 +12,7 @@ import Model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -153,9 +154,9 @@ public class FeedbackDAO extends DBContext {
 
     public void updateStatusImages(int imageId, boolean imageStatus) {
         try {
-            String sql = "UPDATE [Feedback_Images]\n" +
-                        "   SET [Status] = ?\n" +
-                        " WHERE FeedbackImageId = ?";
+            String sql = "UPDATE [Feedback_Images]\n"
+                    + "   SET [Status] = ?\n"
+                    + " WHERE FeedbackImageId = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setBoolean(1, imageStatus);
             st.setInt(2, imageId);
@@ -164,7 +165,8 @@ public class FeedbackDAO extends DBContext {
             Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-      public List<Feedback> getListFeedback() {
+
+    public List<Feedback> getListFeedback() {
         List<Feedback> ls = new ArrayList<Feedback>();
         try {
 
@@ -245,6 +247,136 @@ public class FeedbackDAO extends DBContext {
         return n;
     }
 
+    public int getOrderDetailIdByOrderIdAndProductId(int orderId, int productId) {
+        try {
+            String sql = "select OrderDetailId from OrderDetail where OrderID = ? and ProductId=?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, orderId);
+            st.setInt(2, productId);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("OrderDetailId");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public int getLastIndexOfFeedback_Images() {
+        try {
+            String sql = "select MAX(FeedbackImageId) as id from Feedback_Images";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public boolean isGivenFeedback(int userId, int productId, int orderId) {
+        try {
+            String sql = "select *from Feedback as f join OrderDetail as od on f.OrderDetailID = od.OrderDetailID\n"
+                    + "where f.ProductId = ? and UserId = ? and OrderId=?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, productId);
+            st.setInt(2, userId);
+            st.setInt(3, orderId);
+            ResultSet rs = st.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean isBought(int productId, int userId, int orderId) {
+        try {
+            String sql = "select *from [Order]  as o join OrderDetail as od on o.OrderId = od.OrderId\n"
+                    + "where UserId=? and ProductId=? and o.OrderId=?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            st.setInt(2, productId);
+            st.setInt(3, orderId);
+            ResultSet rs = st.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+
+    }
+
+    public void insertFeedback(Feedback fb) {
+        try {
+            String sql = "INSERT INTO [Feedback]\n"
+                    + "           ([UserId]\n"
+                    + "           ,[OrderDetailID]\n"
+                    + "           ,[RatedStar]\n"
+                    + "           ,[ProductId]\n"
+                    + "           ,[FeedbackStatus]\n"
+                    + "           ,[UpdateDate]\n"
+                    + "           ,[Note])\n"
+                    + "     VALUES\n"
+                    + "           (?\n"
+                    + "           ,?\n"
+                    + "           ,?\n"
+                    + "           ,?\n"
+                    + "           ,?\n"
+                    + "           ,GETDATE()\n"
+                    + "           ,?)";
+//            connection.setAutoCommit(false);
+            PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st.setInt(1, fb.getUserId().getId());
+            st.setInt(2, fb.getOrderDetailsId().getOrderDetailID());
+            st.setInt(3, (int) fb.getRatedStar());
+            st.setInt(4, fb.getProductId().getProductID());
+            st.setInt(5, 1);
+            st.setNString(6, fb.getNote());
+            st.executeUpdate();
+
+            try (ResultSet generatedKeys = st.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    fb.setFeedbackId((int) generatedKeys.getLong(1));
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+
+            sql = "INSERT INTO [Feedback_Images]\n"
+                    + "           ([FeedbackId]\n"
+                    + "           ,[ImageName]\n"
+                    + "           ,[Status])\n"
+                    + "     VALUES\n"
+                    + "           (?\n"
+                    + "           ,?\n"
+                    + "           ,1)";
+            for (Feedback_Images listImage : fb.getListImages()) {
+                PreparedStatement stimg = connection.prepareStatement(sql);
+                stimg.setInt(1, fb.getFeedbackId());
+                stimg.setString(2, listImage.getImageName());
+                stimg.executeUpdate();
+            }
+//            connection.commit();
+
+        } catch (SQLException ex) {
+
+        } finally {
+
+        }
+    }
+
     public static void main(String[] args) {
         FeedbackDAO p = new FeedbackDAO();
 //        List<Feedback> pt = p.getProductFeedback(1);
@@ -253,8 +385,10 @@ public class FeedbackDAO extends DBContext {
 //        }
         List<Feedback> ls = p.getListFeedback();
         for (Feedback l : ls) {
-            System.out.println(l);  
+            System.out.println(l);
         }
-      
+
+        System.out.println(p.isBought(1, 2, 5));
+
     }
 }

@@ -65,7 +65,7 @@ public class UserProfileController extends HttpServlet {
             request.getRequestDispatcher("/View/Customer/Account/UserProfile.jsp").forward(request, response);
         }
         else{
-            response.sendRedirect("/src/HomepageController");
+            response.sendRedirect("/src/homepage");
         }
     }
 

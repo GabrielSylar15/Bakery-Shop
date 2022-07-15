@@ -17,6 +17,15 @@ public class Order_Details {
     private float price;
     private int quantity;
     private int orderDetailID;
+    private boolean statusFeedback;
+
+    public boolean isStatusFeedback() {
+        return statusFeedback;
+    }
+
+    public void setStatusFeedback(boolean statusFeedback) {
+        this.statusFeedback = statusFeedback;
+    }
 
     public Order_Details() {
     }

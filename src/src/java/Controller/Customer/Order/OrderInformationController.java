@@ -6,6 +6,7 @@
 package Controller.Customer.Order;
 
 import DAO.CategoryDAO;
+import DAO.FeedbackDAO;
 import DAO.OrderDAO;
 import DAO.OrderDetailsDAO;
 import DAO.ProductDAO;
@@ -69,7 +70,9 @@ public class OrderInformationController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        User u = (User) request.getSession().getAttribute("user");
+        int orderID = Integer.parseInt(request.getParameter("OrderID"));
+        int userID = u.getId();
         String ckeyword = request.getParameter("categorykeyword");
         String urlkeyword = request.getParameter("searchkeyword");
         ProductDAO Pdao = new ProductDAO();
@@ -134,12 +137,15 @@ public class OrderInformationController extends HttpServlet {
             session.setAttribute("backUrl", "productlist?page=" + page);
             System.out.println("keyword==null");
         }
-        int orderID = Integer.parseInt(request.getParameter("OrderID"));
-        int userID = Integer.parseInt(request.getParameter("userID"));
 
         // get orderdetails by userid
         OrderDetailsDAO odd = new OrderDetailsDAO();
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
         ArrayList<Order_Details> order_details = odd.getOrder_DetailsByOrderId(orderID);
+        for (Order_Details od : order_details) {
+            if(feedbackDAO.isGivenFeedback(userID, od.getProductId().getProductID(), orderID)) od.setStatusFeedback(true);
+            else od.setStatusFeedback(false);
+        }
         request.setAttribute("order_details", order_details);
 
         // get order by userid
@@ -149,7 +155,6 @@ public class OrderInformationController extends HttpServlet {
 
         //get User Information 
         UserDAO ud = new UserDAO();
-        User u = ud.GetUserProfileById(userID);
         request.setAttribute("user", u);
 
         //get total money
@@ -196,7 +201,7 @@ public class OrderInformationController extends HttpServlet {
         //        od.DeleteOrder(OrderID);
         request.setAttribute("mess", "Cancel success");
         request.getRequestDispatcher("../View/Homepage.jsp").forward(request, response);
-        
+
     }
 
     /**

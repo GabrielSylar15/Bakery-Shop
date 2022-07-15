@@ -179,7 +179,7 @@ public class ProductListController extends HttpServlet {
         request.setAttribute("totalProduct", totalProduct);
         request.setAttribute("pageCate", pageCate);
         request.setAttribute("endCaPage", endCaPage);
-        session.setAttribute("listCategory", listCategory);
+        request.setAttribute("listCategory", listCategory);
         request.setAttribute("listProduct", listProduct);
         request.setAttribute("topProduct", topProduct);
 

@@ -300,7 +300,7 @@ public class FeedbackDAO extends DBContext {
     public boolean isBought(int productId, int userId, int orderId) {
         try {
             String sql = "select *from [Order]  as o join OrderDetail as od on o.OrderId = od.OrderId\n"
-                    + "where UserId=? and ProductId=? and o.OrderId=?";
+                    + "where UserId=? and ProductId=? and o.OrderId=? and OrderStatus = 4";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, userId);
             st.setInt(2, productId);

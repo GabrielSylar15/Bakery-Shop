@@ -143,7 +143,7 @@ public class OrderInformationController extends HttpServlet {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         ArrayList<Order_Details> order_details = odd.getOrder_DetailsByOrderId(orderID);
         for (Order_Details od : order_details) {
-            if(feedbackDAO.isGivenFeedback(userID, od.getProductId().getProductID(), orderID)) od.setStatusFeedback(true);
+            if(!feedbackDAO.isGivenFeedback(userID, od.getProductId().getProductID(), orderID) && feedbackDAO.isBought(od.getProductId().getProductID(), userID, orderID)) od.setStatusFeedback(true);
             else od.setStatusFeedback(false);
         }
         request.setAttribute("order_details", order_details);

@@ -13,7 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -515,7 +517,6 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    
     public List<Feature> getALLFeature() {
         List<Feature> ls = new ArrayList<>();
         try {
@@ -539,19 +540,129 @@ public class UserDAO extends DBContext {
         }
         return ls;
     }
-    
+
+    public List<User> getListCustomers(int page_index, int page_size, String fullname, String email, String mobile, int status, String orderBy, String direction) {
+        try {
+            String sql = "select *from (select *, ROW_NUMBER()  OVER(order by ";
+            Hashtable<Integer, Object> params = new Hashtable<>();
+            int index = 1;
+            if (!orderBy.equals("")) {
+                sql += (orderBy + " " + direction);
+            }
+            sql += ") as row_index from [User] where roleid=4) as tbl where (1=1) ";
+            if (!fullname.equals("")) {
+                sql += " and Name like ? ";
+                params.put(index, fullname);
+                index += 1;
+            }
+            if (!email.equals("")) {
+                sql += " and Email like ? ";
+                params.put(index, email);
+                index += 1;
+            }
+            if (!mobile.equals("")) {
+                sql += " and Mobile like ? ";
+                params.put(index, mobile);
+                index += 1;
+            }
+            if (status != -1) {
+                sql += " and StatusId = ? ";
+                params.put(index, status);
+                index += 1;
+            }
+            sql += "and row_index>=?*(?-1)+1 and row_index<=?*? ";
+            PreparedStatement st = connection.prepareStatement(sql);
+
+            for (Map.Entry<Integer, Object> entry : params.entrySet()) {
+                Integer key = entry.getKey();
+                Object value = entry.getValue();
+                if (value.getClass() == String.class) {
+                    st.setString(key, "%" + value + "%");
+                } else if (value.getClass() == Integer.class) {
+                    st.setInt(key, (Integer) value);
+                }
+            }
+            st.setInt(index, page_size);
+            st.setInt(index + 1, page_index);
+            st.setInt(index + 2, page_size);
+            st.setInt(index + 3, page_index);
+            ResultSet rs = st.executeQuery();
+            List<User> listCustomers = new ArrayList<>();
+            while (rs.next()) {
+                User a = new User();
+                a.setId(rs.getInt("Id"));
+                a.setEmail(rs.getString("email"));
+                a.setPassword(rs.getString("password"));
+                a.setRoleID(rs.getInt("RoleID"));
+                a.setName(rs.getString("name"));
+                a.setMobile(rs.getString("mobile"));
+                a.setGender(rs.getBoolean("gender"));
+                a.setImage(rs.getString("image"));
+                a.setToken(rs.getString("token"));
+                a.setExpirationToken(rs.getString("expiration"));
+                a.setAddress(rs.getString("address"));
+                listCustomers.add(a);
+            }
+            return listCustomers;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public int getNumberOfRecords(int page_index, int page_size, String fullname, String email, String mobile, int status) {
+        try {
+            String sql = "select COUNT(*) as total from (select *, ROW_NUMBER()  OVER(order by Email asc) as row_index from [User] where roleid=4) as tbl where (1=1) ";
+            Hashtable<Integer, Object> params = new Hashtable<>();
+            int index = 1;
+            if (!fullname.equals("")) {
+                sql += " and Name like ? ";
+                params.put(index, fullname);
+                index += 1;
+            }
+            if (!email.equals("")) {
+                sql += " and Email like ? ";
+                params.put(index, email);
+                index += 1;
+            }
+            if (!mobile.equals("")) {
+                sql += " and Mobile like ? ";
+                params.put(index, mobile);
+                index += 1;
+            }
+            if (status != -1) {
+                sql += " and StatusId = ? ";
+                params.put(index, status);
+                index += 1;
+            }
+            PreparedStatement st = connection.prepareStatement(sql);
+
+            for (Map.Entry<Integer, Object> entry : params.entrySet()) {
+                Integer key = entry.getKey();
+                Object value = entry.getValue();
+                if (value.getClass() == String.class) {
+                    st.setString(key, "%" + value + "%");
+                } else if (value.getClass() == Integer.class) {
+                    st.setInt(key, (Integer) value);
+                }
+            }
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("total");
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
     public static void main(String[] args) {
         UserDAO udb = new UserDAO();
-        User lsUser = udb.GetUserProfileById(2);
-        System.out.println(udb.checkLogin("thaihh@fpt.edu.vn", "YWJjZDEyMzQ="));
-//        List<User> lsdb = udb.getAllWithRole();
-//        for (User user : lsdb) {
-//            System.out.println(user);
-//        }
-//        List<String> db = udb.getUserGenderList();
-//        for (String string : db) {
-//            System.out.println(string);
-//        }
-        //       System.out.println(new UserDAO().countFeature(1));
+        List<User> listUsers = udb.getListCustomers(1, 8, "", "", "", -1, "Email", "desc");
+        for (User listUser : listUsers) {
+            System.out.println(listUser);
+        }
+        System.out.println(udb.getNumberOfRecords(1, 8, "", "", "", -1));
     }
 }

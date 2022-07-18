@@ -83,6 +83,15 @@ public class OrderDAO extends DBContext {
         return null;
     }
 
+    
+    public static void main(String[] args) {
+        OrderDAO o = new OrderDAO();
+        for (Order x : o.getListOrders(2, 7, 2)) {
+            System.out.println(x.getOderID()+"  "+x.getListOder_Details().size());
+        }
+
+    }
+    
 //    Get number of records by (userId, total numbers records,....)
     public int getNumberOfRecordsOrdersByCondition(String sql) {
         try {
@@ -146,14 +155,6 @@ public class OrderDAO extends DBContext {
             Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ls;
-    }
-
-    public static void main(String[] args) {
-        OrderDAO o = new OrderDAO();
-        for (Order x : o.getListOrders(2, 1, 2)) {
-            System.out.println(x.getStatus());
-        }
-
     }
 
     public int createReturnId(Order order) {
@@ -331,5 +332,6 @@ public class OrderDAO extends DBContext {
         }
         return null;
     }
+    
 
 }

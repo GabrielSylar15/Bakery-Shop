@@ -230,6 +230,10 @@
             <param-value>3</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerList</servlet-name>
+        <servlet-class>Controller.Marketing.Customer.CustomerList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateUserInformation</servlet-name>
         <url-pattern>/user/updateuserinformation</url-pattern>
@@ -445,6 +449,10 @@
     <servlet-mapping>
         <servlet-name>FeedbackController</servlet-name>
         <url-pattern>/customer/feedback</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerList</servlet-name>
+        <url-pattern>/marketing/customer</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

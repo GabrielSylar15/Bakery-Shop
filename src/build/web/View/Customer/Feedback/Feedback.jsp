@@ -284,7 +284,7 @@
                                         <div class="upload__btn-box">
 <!--                                            <div class="wrapper-block"> 
                                                 <label class="upload__btn">
-                                                    <p>Upload</p>
+                                                    <p>Upl ad</p>
                                                     <input type="file" class="upload__inputfile">
                                                 </label>
                                             </div>-->
@@ -354,22 +354,18 @@
 
 	jQuery(document).ready(function () {
 		ImgUpload();
-		RemoveImage()
+		RemoveImage();           
 	});
-
-    function LoadForAddImage(){
-        $(document).change(function (e) { 
-            if($('.upload__inputfile').length==0){
-                
-            }
-            
-        });
-    }    
 
 	var imgArray = [];
     function ImgUpload() {
         $(document).on("change", '.upload__inputfile', function (e) {
             e.preventDefault();
+            if($(".upload__inputfile").length==1){
+                $(this).parent().attr('class', 'upload__btn');
+                $(this).parent().attr('id', '');
+            }
+
             if ($(this).parent().is(':last-child') && $('.upload__inputfile').length<${requestScope.maxNumberOfImages}) {
                     $('.upload__btn-box').append(`<div class="wrapper-block"> 
                                                     <label class="upload__btn">
@@ -395,6 +391,14 @@
     function RemoveImage(){
         $(document).on("click", ".upload__img-close", function () {
                 $(this).parentsUntil(".upload__btn-box").remove();
+                if($(".wrapper-block").length==0){
+                $(".upload__btn-box").append(`<div class="wrapper-block"> 
+                                                <label class="btn btn-warning" id="adding-img">
+                                                    <p>Upload</p>
+                                                    <input type="file" class="upload__inputfile" name="images">
+                                                </label>
+                                            </div>`);
+        }
         });
     }
 

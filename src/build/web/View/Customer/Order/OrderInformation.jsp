@@ -168,10 +168,10 @@
                                                                                     </div>
                                                                                     <div class="ps-section__actions">
                                                                                         <a href="/src/customer/add?productID=${odd.productId.productID}"> <button type="button" class="btnOrderChoose">Rebuy</button></a>
-                                                                                        <c:if test="${odd.statusFeedback==false}">
+                                                                                        <c:if test="${odd.statusFeedback==true}">
                                                                                             <a href="/src/customer/feedback?productId=${odd.productId.productID}&orderId=${requestScope.order.oderID}"> <button type="button" class="btnOrderChoose">FeedBack</button></a>  
                                                                                         </c:if>
-                                                                                        <c:if test="${odd.statusFeedback==true}">
+                                                                                        <c:if test="${odd.statusFeedback==false}">
                                                                                             <button type="button" class="btnOrderChoose" disabled>FeedBack</button>                       
                                                                                         </c:if>
                                                                                     </div>

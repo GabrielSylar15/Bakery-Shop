@@ -6,8 +6,11 @@
 package Controller.Marketing.Customer;
 
 import DAO.UserDAO;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,22 +34,50 @@ public class CustomerList extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UserDAO userDAO = new UserDAO();
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String mobile = request.getParameter("mobile");
+        String raw_name = request.getParameter("name");
+        String raw_email = request.getParameter("email");
+        String raw_mobile = request.getParameter("mobile");
         String raw_status = request.getParameter("status");
+        String raw_order = request.getParameter("orderby");
+        String raw_direction = request.getParameter("direction");
         int status;
+        String name="", email="", mobile="", order="", direction="";
         try {
             status = Integer.parseInt(raw_status);
         } catch (Exception e) {
             status = -1;
         }
-        int page_index, page_size = 2, totalpage = 0;
+        int page_index, page_size = 3, totalpage = 0, count;
+        if(raw_name != null) name = raw_name;
+        if(raw_email != null) email = raw_email;
+        if(raw_mobile != null) mobile = raw_mobile;
+        if(raw_order != null) order = raw_order;
+        if(raw_direction != null) direction = raw_direction;      
+        count = userDAO.getNumberOfRecords(name, email, mobile, status);
         try {
             page_index = Integer.parseInt(request.getParameter("page_index"));
         } catch (Exception e) {
             page_index = 1;
         }
+        if (count % page_size == 0) {
+            totalpage = count / page_size;
+        } else {
+            totalpage = count / page_size + 1;
+        }
+        if (page_index < 1 || page_index > totalpage) {
+            page_index = 1;
+        }
+        List<User> listCustomers = new ArrayList<>();
+//        response.getWriter().print(name + " "+email+ " "+mobile+" "+status+" "+page_index+ " "+order+" "+direction+ " "+page_size);
+        listCustomers =  userDAO.getListCustomers(page_index, page_size, name, email, mobile, status, order, direction);
+        request.setAttribute("page_index", page_index);
+        request.setAttribute("totalpage", totalpage);
+        request.setAttribute("listCustomers", listCustomers);
+        request.setAttribute("name", name);
+        request.setAttribute("email", email);
+        request.setAttribute("mobile", mobile);
+        request.setAttribute("status", status);
+        request.getRequestDispatcher("/View/Marketing/Customer/CustomerList.jsp").forward(request, response);
 
     }
 

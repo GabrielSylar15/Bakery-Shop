@@ -52,7 +52,7 @@ public class MyOrderController extends HttpServlet {
                 for (Order_Details od : o.getListOder_Details()) {
                     total += od.getPrice() * od.getQuantity() * (1-od.getDiscount());
                 }
-                o.setTotalMoney(total);
+                o.setTotalMoney((double) Math.floor(total * 100) / 100);
             }                        
             ProductDAO productDAO = new ProductDAO();
             CategoryDAO categoryDAO = new CategoryDAO();

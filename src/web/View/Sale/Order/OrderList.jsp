@@ -150,7 +150,7 @@
                                                                     <td>${o.saleName}</td>
                                                                     <td>${o.status}</td>
                                                                     <td style="text-align: center;">
-                                                                        <a href=""> View </a>
+                                                                        <a href="/src/order/orderdetails?OrderID=${o.oderID}"> View </a>
                                                                     </td>
                                                                 </tr> 
                                                             </c:forEach>

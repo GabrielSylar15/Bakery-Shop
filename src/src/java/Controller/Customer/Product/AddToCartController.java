@@ -46,10 +46,11 @@ public class AddToCartController extends HttpServlet {
             CartDAO cartdao = new CartDAO();
             Cart cartUser = cartdao.getCartByUserID(user);
             
-            if (cartUser == null || cartUser.getCartID() ==0) {
-                cartUser = new Cart(user);
-                cartdao.InsertCart(cartUser.getUserId().getId());
+            if (cartUser.getCartID() == 0) {
+                cartdao.InsertCart(user.getId());
+                cartUser = cartdao.getCartByUserID(user);
             }
+
             
             if (cartUser.getCarts().containsKey(productID)) {
                 new Cart_DetailDAO().UpdateCartDetail(productID, cartUser.getCartID(), cartUser.getCarts().get(productID).getQuantity()+1);
@@ -61,9 +62,9 @@ public class AddToCartController extends HttpServlet {
             if (backUrl == null) {
                 backUrl = "productlist";
             }
-            request.setAttribute("mess", "AddToCart");
+            session.setAttribute("mess", "AddToCart");
             session.setAttribute("cartUser", cartUser);
-            request.getRequestDispatcher(backUrl).forward(request, response);
+            response.sendRedirect(backUrl);
         }
     }
 

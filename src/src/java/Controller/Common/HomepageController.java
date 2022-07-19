@@ -5,12 +5,15 @@
  */
 package Controller.Common;
 
+import DAO.CartDAO;
 import DAO.PostDAO;
 import DAO.ProductDAO;
 import DAO.SliderDAO;
+import Model.Cart;
 import Model.Post;
 import Model.Product;
 import Model.Slider;
+import Model.User;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -47,10 +51,18 @@ public class HomepageController extends HttpServlet {
             SliderDAO slideDao = new SliderDAO();
             List<Slider> lsSliderForHome = slideDao.get3SliderforHomepage();
 
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            CartDAO cartdao = new CartDAO();
+            Cart cartUser = cartdao.getCartByUserID(user);
+            int a = cartUser.getCarts().size();
+            
+            session.setAttribute("cartUser", cartUser);
+            session.setAttribute("backUrl", "/src/homepage");
             request.setAttribute("lsProduct", lsProForHome);
             request.setAttribute("lsBlog", lsBlogForHome);
             request.setAttribute("lsSlider", lsSliderForHome);
-
+            
             request.getRequestDispatcher("/View/Homepage.jsp").forward(request, response);
         } catch (IOException ex) {
             Logger.getLogger(HomepageController.class.getName()).log(Level.SEVERE, null, ex);

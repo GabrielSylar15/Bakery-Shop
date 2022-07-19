@@ -847,6 +847,56 @@ public class PostDAO extends DBContext {
         }
         return n;
     }
+     public int getCountPost() {
+        int n = 0;
+        try {
+            String sql = "select count(*) from Post  ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PostDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountPostInRange(String before, String then) {
+        int n = 0;
+        try {
+            String sql = "select count(*) from Post where PostDate  between ? and ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, before);
+            stm.setString(2, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PostDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountPostInRange(String status, String before, String then) {
+        int n = 0;
+        try {
+            String sql = "select count(*) from Post where PostStatus = ? and PostDate  between ? and ? ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setString(2, before);
+            stm.setString(3, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PostDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
 
     public static void main(String[] args) {
         PostDAO p = new PostDAO();
@@ -855,7 +905,7 @@ public class PostDAO extends DBContext {
 //            System.out.println("-----------------------------------------");
 //            System.out.println(post);
 //        }
-        System.out.println(p.getLatestPostID());
+        System.out.println(p.getCountPost());
     }
 
 }

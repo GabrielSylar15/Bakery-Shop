@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <h3>Order Note</h3>
                             <textarea id="Ordernote" class="form-control" rows="4" placeholder="" readonly="">
-    ${requestScope.OrderNote}
+                                ${requestScope.OrderNote}
                             </textarea>
                         </div>
                         <hr>
@@ -156,7 +156,7 @@
                                 <!--<div class="ps-block__divider"></div>-->
                                 <div class="ps-block__detail">
                                     <p style="color: black">Sub Total<span> $ <fmt:formatNumber type = "number" 
-         maxIntegerDigits = "3" value = "${requestScope.order.totalMoney}" /> </span></p>
+                                                      maxIntegerDigits = "3" value = "${requestScope.order.totalMoney}" /> </span></p>
                                     <div class="ps-block__divider"></div>
                                 </div>
                                 <div class="ps-block__detail">
@@ -165,7 +165,7 @@
                                 </div>
                                 <div class="ps-block__detail">
                                     <p style="color: black">ToTal Cost<span> $ <fmt:formatNumber type = "number" 
-         maxIntegerDigits = "3" value = "${requestScope.order.totalMoney}" /></span></p>
+                                                      maxIntegerDigits = "3" value = "${requestScope.order.totalMoney}" /></span></p>
                                     <div class="ps-block__divider"></div>
                                 </div>
                                 <div class="ps-block__footer">
@@ -208,11 +208,19 @@
 <script src="/src/assests/js/toast.js"></script>
 <script>
 
-    <c:if test="${requestScope.mess=='Order Has Been Confirmed'}">
+    <c:if test="${sessionScope.mess=='Order Has Been Confirmed'}">
     Alert({
         type: "success",
-        content: "Order Has Been Confirmed"
+        content: "Order Has Been Confirmed!!!!"
     })
+        <%    session.removeAttribute("mess");%>
     </c:if>
 
+    <c:if test="${sessionScope.mess=='Check Your Email To Confirm Your Order'}">
+    Alert({
+        type: "success",
+        content: "Check Your Email To Confirm Your Order!!!!"
+    })
+        <%    session.removeAttribute("mess");%>
+    </c:if>
 </script>

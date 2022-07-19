@@ -377,6 +377,152 @@ public class FeedbackDAO extends DBContext {
         }
     }
 
+    public int getCountAllStarByDate(String from, String to) {
+        int total = 0;
+        try {
+            String sql = "select sum(c.RatedStar) from\n"
+                    + "(select b.*, o.OrderDate from\n"
+                    + "(select a.*, p.CategoryID from\n"
+                    + "(select od.OrderDetailID, f.RatedStar, od.ProductID, od.OrderID from Feedback f inner join OrderDetail od on f.OrderDetailID = od.OrderDetailID)a inner join Product p \n"
+                    + "on a.ProductID = p.ProductId)b inner join [Order] o on b.OrderID= o.OrderId \n"
+                    + "where o.OrderDate > = ? and o.OrderDate < = ? )c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getTotalAllFeebackByDate(String from, String to) {
+        int total = 0;
+        try {
+            String sql = "select count(c.OrderDetailID) from\n"
+                    + "(select b.*, o.OrderDate from\n"
+                    + "(select a.*, p.CategoryID from\n"
+                    + "(select od.OrderDetailID, f.RatedStar, od.ProductID, od.OrderID from Feedback f inner join OrderDetail od on f.OrderDetailID = od.OrderDetailID)a inner join Product p \n"
+                    + "on a.ProductID = p.ProductId)b inner join [Order] o on b.OrderID= o.OrderId \n"
+                    + "where o.OrderDate > = ? and o.OrderDate < = ? )c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getCountStarByDateAndCate(String from, String to, int i) {
+        int total = 0;
+        try {
+            String sql = "select sum(c.RatedStar) from\n"
+                    + "(select b.*, o.OrderDate from\n"
+                    + "(select a.*, p.CategoryID from\n"
+                    + "(select od.OrderDetailID, f.RatedStar, od.ProductID, od.OrderID from Feedback f inner join OrderDetail od on f.OrderDetailID = od.OrderDetailID)a inner join Product p \n"
+                    + "on a.ProductID = p.ProductId)b inner join [Order] o on b.OrderID= o.OrderId \n"
+                    + "where o.OrderDate > = ? and o.OrderDate < = ? and b.CategoryID = ? )c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            statement.setInt(3, i);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getTotalFeebackByDateAndCate(String from, String to, int i) {
+        int total = 0;
+        try {
+            String sql = "select count(c.OrderDetailID) from\n"
+                    + "(select b.*, o.OrderDate from\n"
+                    + "(select a.*, p.CategoryID from\n"
+                    + "(select od.OrderDetailID, f.RatedStar, od.ProductID, od.OrderID from Feedback f inner join OrderDetail od on f.OrderDetailID = od.OrderDetailID)a inner join Product p \n"
+                    + "on a.ProductID = p.ProductId)b inner join [Order] o on b.OrderID= o.OrderId \n"
+                    + "where o.OrderDate > = ? and o.OrderDate < = ? and b.CategoryID = ?)c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            statement.setInt(3, i);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getCountFeedbackInRange(String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "  FROM [Feedback]\n"
+                    + "  where UpdateDate between ? and ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, before);
+            stm.setString(2, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountFeedbackInRange(String status, String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "  FROM [Feedback]\n"
+                    + "  where UpdateDate between ? and ? and FeedbackStatus = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(3, status);
+            stm.setString(1, before);
+            stm.setString(2, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountFeedback() {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "FROM [Feedback] ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
     public static void main(String[] args) {
         FeedbackDAO p = new FeedbackDAO();
 //        List<Feedback> pt = p.getProductFeedback(1);

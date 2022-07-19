@@ -3,9 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/Controller/Marketing/Customer/CustomerList.java</file>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/nbproject/build-impl.xml</file>
-            <file>file:/C:/Users/ADMIN/Desktop/New%20folder/Summer2022-SE1616-G2/src/src/java/DAO/UserDAO.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Order/MyOrderController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Order/UpdateQuantityOrderController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Order/UpdateOrderController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/web/View/Customer/Order/OrderInformation.jsp</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Order/OrderInformationController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Order/OrderDetailsController.java</file>
+            <file>file:/C:/Users/ADMIN/Desktop/Final/src/src/java/Controller/Customer/Cart/CartCompletionController.java</file>
         </group>
     </open-files>
 </project-private>

@@ -248,11 +248,12 @@
 <script src="/src/assests/js/toast.js"></script>
 <script>
 
-    <c:if test="${requestScope.mess=='AddToCart'}">
+    <c:if test="${sessionScope.mess=='AddToCart'}">
     Alert({
         type: "success",
         content: "Add successful!!!"
     })
+    <%    session.removeAttribute("mess");%>
     </c:if>
 
 </script>

@@ -20,7 +20,7 @@
         <meta name="description" content="">
         <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:300i,400,400i,500,500i,600,600i,700&amp;display=swap" rel="stylesheet">
        
-        <title>Product List</title>
+        <title>Cart Details</title>
         <style>
             .ps-shopping__right .ps-form--widget-search{
                 width: 80%;
@@ -55,11 +55,11 @@
             <div class="ps-hero__container">
                 <div class="ps-breadcrumb">
                     <ul class="breadcrumb">
-                        <li><a href="/src/comment/homepage">Home</a></li>
-                        <li>Shop Page</li>
+                        <li><a href="/src/homepage">Home</a></li>
+                        <li>Cart Details</li>
                     </ul>
                 </div>
-                <h1 class="ps-hero__heading">Shop Products</h1>
+                <h1 class="ps-hero__heading">Cart Detail</h1>
             </div>
         </div>
         <div class="ps-page--shop">
@@ -143,7 +143,7 @@
                                             <c:set var="i" value="0"></c:set>
                                             <c:forEach items="${cart.carts}" var="c">
 
-                                            <form action="updatequantity">
+                                            
                                                 <tr>
                                                     <td>${i=i+1}</td>
                                                 <input type="hidden" name="productId" value="${c.value.product.productID}">
@@ -161,13 +161,13 @@
                                                     </c:choose></td>
                                                 <td>
                                                     <div class="form-group--number" style="width: 100px">
-                                                        <input class="form-control" onchange="this.form.submit()" name="quantity" type="number" value="${c.value.quantity}">
+                                                    <input class="form-control"  onchange="doUpdate(${c.value.product.productID}, '${c.value.product.productName}', ${c.value.quantity})" id="quantity${c.value.product.productID}" name="quantity" type="number" min="1" value="${c.value.quantity}" oninput="validity.valid||(value='');" onpress="isNumber(event)">
                                                     </div>
                                                 </td>
                                                 <td class="total" id="total">$<fmt:formatNumber  type="number"  maxFractionDigits="2" value="${c.value.product.price*(1- c.value.product.discount)*c.value.quantity}"/></td>
                                                 <td class="ps-table__actions"><a class="ps-btn--close"  onclick="doDelete(${c.value.product.productID}, '${c.value.product.productName}')"></a></td>
                                                 </tr>
-                                            </form>
+                                            
                                         </c:forEach>
                                         </tbody>
                                     </table>
@@ -304,6 +304,35 @@
         </div>
         <%@include file="../../public/footer.jsp" %>
         <script>
-          
+          function doUpdate(id, name, oldquantity) {
+                var quantity = document.getElementById("quantity" + id).value;
+                console.log(quantity);
+                if(quantity === ""){
+                    alert("Quantity is NULL now!");
+                }else{
+                    var c = confirm("Are you want to update: " + name +  "?");
+                    if (c) {
+                        window.location.href = "updatequantity?productId=" + id + "&quantity=" + quantity;
+                    } else {
+                        window.location.href = "updatequantity?productId=" + id + "&quantity=" + oldquantity;
+                    }
+                }
+            }
+            // this prevents from typing non-number text, including "e".
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                let charCode = (evt.which) ? evt.which : evt.keyCode;
+                if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+                    evt.preventDefault();
+                } else {
+                    return true;
+                }
+            }
+            function doDelete(id, name) {
+                var c = confirm("Are you sure you want to delete: " + name + "?");
+                if (c) {
+                    window.location.href = "deleteproductcart?productId=" + id;
+                }
+            }
         </script>
 </html>

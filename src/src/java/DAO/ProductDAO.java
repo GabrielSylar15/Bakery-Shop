@@ -807,7 +807,76 @@ public class ProductDAO extends DBContext {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void updateOutOfStockPro(int productID) {
+        String sql = "UPDATE [dbo].[Product]\n"
+                + "SET StatusID = 0 \n"
+                + "WHERE ProductId = ? ";
+        try {
 
+            PreparedStatement stm = connection.prepareStatement(sql);
+
+            stm.setInt(1, productID);
+            stm.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public int getCountProductInRange(String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "FROM [Product]\n"
+                    + "where CreateDate between ? and ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, before);
+            stm.setString(2, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountProductInRange(String status, String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "FROM [Product]  p inner join Product_Status  ps on ps.ProductStatusID = p.StatusID\n"
+                    + "where  p.StatusID = ? and CreateDate between ? and ?  ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setString(2, before);
+            stm.setString(3, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+    public int getCountProduct() {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "FROM [Product] ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+         
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
   
     public static void main(String[] args) {
        

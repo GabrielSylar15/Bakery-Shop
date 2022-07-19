@@ -108,8 +108,8 @@
                                     <h3>Order Detail</h3>
                                     <p>Order ID: <span>${requestScope.order.oderID}</span></p>
                                     <p>Order Date: <span>${requestScope.order.orderDate}</span></p>
-                                    <p>Total Cost: <span>$${requestScope.order.totalMoney}</span></p>
-                                    <p>Status: <span>${requestScope.order.orderStatus}</span></p>
+                                    <p>Total Cost: <span>$<fmt:formatNumber  type="number"  maxFractionDigits="2" value="${requestScope.order.totalMoney}"/></span></p>
+                                    <p>Status: <span>${requestScope.order.status}</span></p>
                                 </div>
                             </div>
                         </div>
@@ -133,79 +133,75 @@
                                                 </div>
                                                 </div>
                                                 <div class="ps-product-box">
-
                                                     <div class="table-responsive">
-                                                        <table class="table ps-table ps-table--shopping-cart">
-                                                            <thead id="orderInfoTable">
-                                                                <tr>
-                                                                    <th id="producTh">Product Name</th>
-                                                                    <th>Category</th>
-                                                                    <th>Price</th>
-                                                                    <th>Quantity</th>
-                                                                    <th>Total</th>
-
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="orderInfoTable">
-
-                                                                <c:forEach items="${requestScope.order_details}" var="odd">    
+                                                        <form action="/src/order/orderinformation" method="POST">
+                                                            <input type="hidden" name="OrderID" value="${requestScope.order.oderID}">
+                                                            <table class="table ps-table ps-table--shopping-cart">
+                                                                <thead id="orderInfoTable">
                                                                     <tr>
-                                                                        <td id="productTd">
-                                                                            <div class="ps-product--cart">
-                                                                                <div class="ps-product" id="productthumbnail">
-                                                                                    <div class="ps-product__thumbnail">
-                                                                                        <img src="${odd.productId.thumbnail}" alt="" />
-                                                                                        <a class="ps-product__overlay" href="/src/customer/productdetail?productID=${odd.productId.productID}"></a>
-                                                                                        <span class="ps-badge ps-badge--sale"><i><fmt:formatNumber type = "percent" maxIntegerDigits = "3" value = "${odd.productId.discount}" /></i></span>
-                                                                                    </div>
-
-                                                                                </div>
-
-                                                                                <div class="ps-product__content">
-                                                                                    <a class="ps-product__title" href="/src/customer/productdetail?productID=${odd.productId.productID}">${odd.productId.productName}</a>
-                                                                                    <div class="ps-product__meta">
-                                                                                        <p id="metap" style="font-size: 15px ; ">From <a class="metaa">Hoang</a></p>
-                                                                                    </div>
-                                                                                    <div class="ps-section__actions">
-                                                                                        <a href="/src/customer/add?productID=${odd.productId.productID}"> <button type="button" class="btnOrderChoose">Rebuy</button></a>
-                                                                                        <c:if test="${odd.statusFeedback==true}">
-                                                                                            <a href="/src/customer/feedback?productId=${odd.productId.productID}&orderId=${requestScope.order.oderID}"> <button type="button" class="btnOrderChoose">FeedBack</button></a>  
-                                                                                        </c:if>
-                                                                                        <c:if test="${odd.statusFeedback==false}">
-                                                                                            <button type="button" class="btnOrderChoose" disabled>FeedBack</button>                       
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                        </td>
-                                                                        <td>${odd.productId.categoryID.categoryName}</td>
-                                                                        <td>$${odd.productId.price}</td>
-                                                                        <td>${odd.quantity}</td>
-                                                                        <td class="total">
-                                                                            <fmt:formatNumber type = "CURRENCY" maxIntegerDigits = "5" value = "${odd.quantity *(odd.productId.price - (odd.productId.discount * odd.productId.price ))}" />
-                                                                        </td>
+                                                                        <th id="producTh">Product Name</th>
+                                                                        <th>Category</th>
+                                                                        <th>Price</th>
+                                                                        <th>Quantity</th>
+                                                                        <th>Total</th>
 
                                                                     </tr>
-                                                                </tbody>
-                                                            </c:forEach>    
-                                                            <tfoot id="tfootOrder">
+                                                                </thead>
+                                                                <tbody id="orderInfoTable">
 
-                                                                <tr>
-                                                                    <td colspan="2" >
-                                                                        <div class="ps-section__actions">
-                                                                            <figure><a class="ps-btn" href="/src/cart/cartdetails">Update
-                                                                                    <a id="btnChoose"  class="ps-btn ps-btn--outline" href="#">Cancel</a>
-                                                                                </a>
-                                                                        </div>
-                                                                    <td>
-                                                                    <td id="Pay">Total Pay: </td>
-                                                                    <td id="Pay">$${requestScope.order.totalMoney}</td>
-                                                                </tr>
+                                                                    <c:forEach items="${requestScope.order_details}" var="odd">    
+                                                                        <tr>
+                                                                            <td id="productTd">
+                                                                                <div class="ps-product--cart">
+                                                                                    <div class="ps-product" id="productthumbnail">
+                                                                                        <div class="ps-product__thumbnail">
+                                                                                            <img src="${odd.productId.thumbnail}" alt="" />
+                                                                                            <a class="ps-product__overlay" href="/src/customer/productdetail?productID=${odd.productId.productID}"></a>
+                                                                                            <span class="ps-badge ps-badge--sale"><i><fmt:formatNumber type = "percent" maxIntegerDigits = "3" value = "${odd.productId.discount}" /></i></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="ps-product__content">
+                                                                                        <a class="ps-product__title" href="/src/customer/productdetail?productID=${odd.productId.productID}">${odd.productId.productName}</a>
+                                                                                        <div class="ps-product__meta">
+                                                                                            <p id="metap" style="font-size: 15px ; ">From <a class="metaa">Hoang</a></p>
+                                                                                        </div>
+                                                                                        <div class="ps-section__actions">
+                                                                                            <a href="/src/order/addtocart?productID=${odd.productId.productID}&orderId=${requestScope.order.oderID}"> <button type="button" class="btnOrderChoose">Rebuy</button></a>
+                                                                                            <c:if test="${odd.statusFeedback==true}">
+                                                                                                <a href="/src/customer/feedback?productId=${odd.productId.productID}&orderId=${requestScope.order.oderID}"> <button type="button" class="btnOrderChoose">FeedBack</button></a>  
+                                                                                            </c:if>
+                                                                                            <c:if test="${odd.statusFeedback==false}">
+                                                                                                <button type="button" class="btnOrderChoose" disabled>FeedBack</button>                       
+                                                                                            </c:if>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>${odd.productId.categoryID.categoryName}</td>
+                                                                            <td>$${odd.productId.price}</td>
+                                                                            <td>${odd.quantity}</td>
+                                                                            <td class="total">
+                                                                                <fmt:formatNumber type = "CURRENCY" maxIntegerDigits = "5" value = "${odd.productId.price*(1- odd.productId.discount)*odd.quantity}" />
+                                                                            </td>
 
-                                                            </tfoot>
-                                                        </table>
-
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </c:forEach>    
+                                                                <tfoot id="tfootOrder">
+                                                                    <tr>
+                                                                        <td colspan="2" >
+                                                                            <div class="ps-section__actions">
+                                                                                <figure><a class="ps-btn" href="/src/order/updateorder?OrderId=${requestScope.order.oderID}">Update</a>
+                                                                                    <button type="submit" id="btnChoose"  class="ps-btn ps-btn--outline">Cancel</button>
+                                                                                </figure>
+                                                                            </div>
+                                                                        <td>
+                                                                        <td id="Pay">Total Pay: </td>
+                                                                        <td id="Pay">$<fmt:formatNumber  type="number"  maxFractionDigits="2" value="${requestScope.order.totalMoney}"/></td>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </form>
                                                     </div>
                                                 </div>
 
@@ -256,11 +252,26 @@
                                                 <script src="/src/assests/js/toast.js"></script>
                                                 <script>
 
-                                                    <c:if test="${requestScope.mess=='Product was added to Cart'}">
+                                                    <c:if test="${sessionScope.mess=='Product was added to Cart'}">
                                                     Alert({
                                                         type: "success",
                                                         content: "Product was added to Cart!!!"
                                                     })
+                                                        <%    session.removeAttribute("mess");%>
                                                     </c:if>
-
+                                                    <c:if test="${sessionScope.mess=='CanCel Order Successfull'}">
+                                                    Alert({
+                                                        type: "success",
+                                                        content: "CanCel Order Successfull!!!"
+                                                    })
+                                                        <%    session.removeAttribute("mess");%>
+                                                    </c:if>
+                                                        
+                                                    <c:if test="${sessionScope.mess=='Update Order Sucessfull'}">
+                                                    Alert({
+                                                        type: "success",
+                                                        content: "Update Order Sucessfull!!!"
+                                                    })
+                                                        <%    session.removeAttribute("mess");%>
+                                                    </c:if>
                                                 </script>

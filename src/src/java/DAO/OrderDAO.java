@@ -83,15 +83,14 @@ public class OrderDAO extends DBContext {
         return null;
     }
 
-    
     public static void main(String[] args) {
         OrderDAO o = new OrderDAO();
         for (Order x : o.getListOrders(2, 7, 2)) {
-            System.out.println(x.getOderID()+"  "+x.getListOder_Details().size());
+            System.out.println(x.getOderID() + "  " + x.getListOder_Details().size());
         }
 
     }
-    
+
 //    Get number of records by (userId, total numbers records,....)
     public int getNumberOfRecordsOrdersByCondition(String sql) {
         try {
@@ -177,6 +176,7 @@ public class OrderDAO extends DBContext {
         }
         return 0;
     }
+
     // get latest order by userid
     public int getLastestOrder(int userid) {
         try {
@@ -193,6 +193,7 @@ public class OrderDAO extends DBContext {
         }
         return 0;
     }
+
     //get Address to ship 
     public String getAddressShip() {
         try {
@@ -208,7 +209,8 @@ public class OrderDAO extends DBContext {
         }
         return null;
     }
-     public String getOrderNote() {
+
+    public String getOrderNote() {
         try {
             String sql = " select top 1 Notes from Ship_Information\n"
                     + "order by ShipInfoID desc";
@@ -222,7 +224,8 @@ public class OrderDAO extends DBContext {
         }
         return null;
     }
-     // insert orderid and saleid roltatesly
+    // insert orderid and saleid roltatesly
+
     public void UpdateSaleID(int saleid) {
         String sql = "UPDATE [dbo].[Order]\n"
                 + "   SET [SaleId] = ?\n"
@@ -235,7 +238,8 @@ public class OrderDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     //update orderstatus
+    //update orderstatus
+
     public void UpdateOrderStatus(int orderId) {
         String sql = "UPDATE [dbo].[Order]\n"
                 + "   SET [OrderStatus] = 3\n"
@@ -248,7 +252,7 @@ public class OrderDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public List<Order> getListOrderforSale() {
         String sql = "select o.OrderId, u.[Name] as CusName, o.TotalMoney,us.[Name] as SaleName, o.OrderDate, os.[Status] from [Order] o inner join [User] u \n"
                 + "on o.UserId = u.Id\n"
@@ -332,6 +336,235 @@ public class OrderDAO extends DBContext {
         }
         return null;
     }
-    
+
+    //get Count Order by date and status
+    public int getCountOrderByDateAndStatus(String from, String to, int status) {
+        int total = 0;
+        try {
+            String sql = "select count(OrderId) from [Order] \n"
+                    + "where OrderDate > = ? and OrderDate < = ? and OrderStatus = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            statement.setInt(3, status);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getCountAllOrderByDate(String from, String to) {
+        int total = 0;
+        try {
+            String sql = "select count(OrderId) from [Order] \n"
+                    + "where OrderDate > = ? and OrderDate < = ? ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getCountCusBoughtByDate(String from, String to) {
+        int total = 0;
+        try {
+            String sql = "select count(a.UserId) from \n"
+                    + "(select count(OrderId) as counta, UserId from [Order]  where OrderDate > = ? and OrderDate < = ?\n"
+                    + " group by UserId)a";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public double getCountAllRevenuesByDate(String from, String to) {
+        double total = 0;
+        try {
+            String sql = " select CONVERT( numeric(10,2), c.sumtotal) from\n"
+                    + "(select sum(b.Price*b.Quantity*(1-b.Discount)) as sumtotal from\n"
+                    + "(select a.*, o.OrderDate from \n"
+                    + "(select od.*, p.CategoryID from [OrderDetail] od inner join Product p \n"
+                    + "on od.ProductID = p.ProductId )a inner join [Order] o\n"
+                    + "on a.OrderID = o.OrderId\n"
+                    + "where OrderDate > = ? and OrderDate < = ? )b)c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getDouble(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getCountOrderByDate(String date) {
+        int n = 0;
+        try {
+            String sql = "select COUNT(*) from [Order] where CONVERT(VARCHAR(25), OrderDate, 126)  like ? ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, "%" + date + "%");
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public double getCountRevenuesByDateAndCateId(String from, String to, int i) {
+        double total = 0;
+        try {
+            String sql = "select CONVERT( numeric(10,2), c.sumtotal) from\n"
+                    + "(select sum(b.Price*b.Quantity*(1-b.Discount)) as sumtotal from\n"
+                    + "(select a.*, o.OrderDate from \n"
+                    + "(select od.*, p.CategoryID from [OrderDetail] od inner join Product p \n"
+                    + "on od.ProductID = p.ProductId where p.CategoryID = ?)a inner join [Order] o\n"
+                    + "on a.OrderID = o.OrderId\n"
+                    + "where OrderDate > = ? and OrderDate < = ? )b)c";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, i);
+            statement.setString(2, from);
+            statement.setString(3, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+        // delete product order
+    public void DeleteProductOrder(int orderId, int productId) {
+        try {
+            String sql = "DELETE FROM [dbo].[OrderDetail]\n"
+                    + "      WHERE OrderID = ? and ProductID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, orderId);
+            statement.setInt(2, productId);
+            statement.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+        //get ordernote by ship id
+
+    public String getOrderNoteByShipID(int shipid) {
+        try {
+            String sql = "  select top 1 Notes from Ship_Information\n"
+                    + "  where ShipInfoID = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, shipid);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+        //get list order status
+
+    public List<String> getOrderStatusList() {
+        String sql = "  select distinct [OrderStatusID] from [Order_Status]";
+        List<String> ls = new ArrayList<>();
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                String a = rs.getString("OrderStatusID");
+                ls.add(a);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ls;
+    }
+        //get list sale
+
+    public List<String> getSaleList() {
+        String sql = "  SELECT [Id] \n"
+                + "FROM\n"
+                + "    [User] where RoleID = 2\n"
+                + "		order by Id asc;";
+        List<String> ls = new ArrayList<>();
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                String a = rs.getString("Id");
+                ls.add(a);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ls;
+    }
+        //update orderstatus and saleid
+
+    public void UpdateOrderStatusAndSaleId(int saleid, int orderstatus, int orderId) {
+        String sql = "UPDATE [dbo].[Order]\n"
+                + "   SET [SaleId] = ?\n"
+                + "      ,[OrderStatus] = ?\n"
+                + " WHERE OrderId = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, saleid);
+            stm.setInt(2, orderstatus);
+            stm.setInt(3, orderId);
+            stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        //update ordernote
+
+    public void UpdateOrderNote(String note, int shipid) {
+        String sql = "UPDATE [dbo].[Ship_Information]\n"
+                + "   SET [Notes] = ?\n"
+                + " WHERE ShipInfoID = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, note);
+            stm.setInt(2, shipid);
+            stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        // cancel order
+    public void CancelOrder(int orderId) {
+        try {
+            String sql = "UPDATE [dbo].[Order]\n"
+                    + "   SET [OrderStatus] = 1\n"
+                    + " WHERE OrderId = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, orderId);
+            statement.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
 
 }

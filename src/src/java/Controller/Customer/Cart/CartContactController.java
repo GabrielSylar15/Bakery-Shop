@@ -50,7 +50,6 @@ public class CartContactController extends HttpServlet {
     }
     
     private static final DecimalFormat df = new DecimalFormat("#.##");
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -67,6 +66,7 @@ public class CartContactController extends HttpServlet {
         String skeyword = request.getParameter("searchkeyword");
 
         ProductDAO Pdao = new ProductDAO();
+        //get top 3 lastest product 
         List<Product> topProduct = Pdao.getTopProduct(true);
         List<Product> listProduct = null;
         HttpSession session = request.getSession();
@@ -77,17 +77,20 @@ public class CartContactController extends HttpServlet {
         User user = (User) session.getAttribute("user");
         CartDAO cartdao = new CartDAO();
         Cart cartUser = cartdao.getCartByUserID(user);
+        //check account null
         if (user == null) {
             request.setAttribute("mess", "LoginForCart");
             request.getRequestDispatcher("../View/Homepage.jsp").forward(request, response);
 
         } else {
         Cart cart = null;
+        //get page category = 1 when page cate null
         if (pageCate == null) {
             pageCate = "1";
         }
         int pageCategory = Integer.parseInt(pageCate);
         final int CA_PAZE_SIZE = 3;
+        //get total category and list category page by cart Id
         int totalCategory = Cdao.getTotalCategoryByCartId(true, cartUser.getCartID());
         int endCaPage = totalCategory / CA_PAZE_SIZE;
         if (totalCategory % CA_PAZE_SIZE != 0) {
@@ -182,6 +185,15 @@ public class CartContactController extends HttpServlet {
         
         Cart cartUser = cartdao.getCartByUserID(user);
         
+        for (Map.Entry<Integer, Cart_Detail> entry : cartUser.getCarts().entrySet()) {
+            Integer key = entry.getKey();
+            Cart_Detail value = entry.getValue();
+            Product product = value.getProduct();
+            if (product.getQuantity() == 0) {
+                response.sendRedirect("/src/View/404.jsp");
+                return;
+            }
+        }
         
         ShipInformation shipInfor = new ShipInformation(address, fullname, gender, phone, email, note);
         ShipInformationDAO sidao = new ShipInformationDAO();
@@ -202,19 +214,24 @@ public class CartContactController extends HttpServlet {
         int orderId = orderDAO.createReturnId(order);
         OrderDetailsDAO cdedao = new OrderDetailsDAO();
         ProductDAO pdao = new ProductDAO();
+        
         for (Map.Entry<Integer, Cart_Detail> entry : cartUser.getCarts().entrySet()) {
             Integer key = entry.getKey();
             Cart_Detail value = entry.getValue();
             Product product = value.getProduct();
             ProductDAO productDAO = new ProductDAO();
             Product currentProduct = productDAO.getProductbyID(product.getProductID());
-            int currentQuantity = currentProduct.getQuantity()- value.getQuantity();
-
+            int currentQuantity = currentProduct.getQuantity() - value.getQuantity();
+            
             cdedao.saveOrderDetalsByProduct(orderId, value);
             pdao.updateQuantityProduct(currentQuantity, product.getProductID());
+            if(currentQuantity == 0){
+                pdao.updateOutOfStockPro(product.getProductID());
+            }
         }
         new Cart_DetailDAO().removeAllByCartId(cartUser.getCartID());
 //        cartdao.removeCartById(cartUser.getCartID());
+        session.setAttribute("mess", "Check Your Email To Confirm Your Order");
         response.sendRedirect("/src/customer/cartcompletion");
 
 

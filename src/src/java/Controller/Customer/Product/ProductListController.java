@@ -118,7 +118,6 @@ public class ProductListController extends HttpServlet {
                 }
                 listProduct = Pdao.getListProductByCidPaging(true, keywordInt, page, PAZE_SIZE);
                 session.setAttribute("backUrl", "productlist?categorykeyword=" + ckeyword);
-                System.out.println("ckeyword!!!=null");
             } //check list search by name exist and pagging
             else if (urlkeyword != null) {
                 totalProduct = Pdao.getTotalProductBySearchName(true, urlkeyword);
@@ -128,7 +127,6 @@ public class ProductListController extends HttpServlet {
                 }
                 listProduct = Pdao.getListProductBySearchNamePaging(true, urlkeyword, page, PAZE_SIZE);
                 session.setAttribute("backUrl", "productlist?searchkeyword=" + urlkeyword);
-                System.out.println("keyword!=null");
                 //all product list and pagging
             } else {
                 listProduct = Pdao.getListProductPaging(true, page, PAZE_SIZE);
@@ -139,28 +137,22 @@ public class ProductListController extends HttpServlet {
                     endPage += 1;
                 }
                 session.setAttribute("backUrl", "productlist?page=" + page);
-                System.out.println("keyword==null");
             }
         } else {
             //check list category by id exist and pagging
             if (ckeyword != null) {
                 int keywordInt = Integer.parseInt(ckeyword);
-
                 listProduct = Pdao.getListProductByCid(true, keywordInt);
                 session.setAttribute("backUrl", "productlist?categorykeyword=" + ckeyword);
 
             } //check list search by name exist and pagging
             else if (urlkeyword != null) {
-
                 listProduct = Pdao.getListProductBySearchName(true, urlkeyword);
                 session.setAttribute("backUrl", "productlist?searchkeyword=" + urlkeyword);
-                System.out.println("keyword!=null");
                 //all product list and pagging
             } else {
                 listProduct = Pdao.getListProduct(true);
-
                 session.setAttribute("backUrl", "productlist?page=" + page);
-                System.out.println("keyword==null");
             }
         }
 

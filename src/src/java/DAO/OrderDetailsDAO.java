@@ -72,6 +72,21 @@ public class OrderDetailsDAO extends DBContext{
         }
        
     }
+        // update quantity of orderinformation
+    public void UpdateQuantity(int productID, int orderID, int quantity) {
+        try {
+            String sql = "UPDATE [dbo].[OrderDetail]\n"
+                    + "   SET [Quantity] = ?\n"
+                    + " WHERE ProductID =? and OrderID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, quantity);
+            statement.setInt(2, productID);
+            statement.setInt(3, orderID);
+            statement.executeUpdate();
+        } catch (Exception e) {
+        }
+
+    }
 
     public void saveOrderDetalsByProduct(int orderId, Cart_Detail value) {
         try {

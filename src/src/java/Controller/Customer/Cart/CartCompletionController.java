@@ -142,8 +142,8 @@ public class CartCompletionController extends HttpServlet {
         request.setAttribute("user", u);
         float totalMoney = 0;
         for (Order_Details orderdetail : order_details) {
-            totalMoney += (orderdetail.getPrice() - (orderdetail.getDiscount() * orderdetail.getPrice()))
-                    * orderdetail.getQuantity();
+            totalMoney += (orderdetail.getPrice() * (1-orderdetail.getDiscount())
+                    * orderdetail.getQuantity());
         }
         order.setTotalMoney(totalMoney);
         int saleid = ud.GetLastestSaler();

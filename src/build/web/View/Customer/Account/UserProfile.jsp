@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-sm-3"><!--left col-->
                     <div class="text-center">
-                        <img src="../${user.image}" class="avatar img-circle img-thumbnail" alt="avatar">
+                        <img src="/src/uploads/avatar/${user.image}" class="avatar img-circle img-thumbnail" alt="avatar">
                     </div>
                     </hr>
                     <br>
@@ -95,10 +95,10 @@
             </div><!--/tab-content-->
         </div>
         <!--Update User Information -->
-        <div class="modal fade" id="UpdateInfor">
+<div class="modal fade" id="UpdateInfor">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form action="/src/user/updateuserinformation?Id=${user.id}" method="POST" enctype='multipart/form-data'>
+                    <form action="/src/account/updateuserprofile?Id=${user.id}" method="POST" enctype='multipart/form-data'>
                         <div class="modal-header">						
                             <h4 class="modal-title" >Update User Information</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -106,35 +106,50 @@
                         <div class="text-center">
                             <img src="../${user.image}" class="avatar img-circle img-thumbnail" alt="avatar" style="width: 250px;height: 180px">
                             <hr>
-                            <input type="file" name="Image" class="text-center center-block file-upload">
+                            <input type="file" name="images" class="text-center center-block file-upload">
                         </div>
                         </hr>
                         <div class="modal-body">					
                             <div class="form-group">
                                 <label>Name</label>
-                                <input name="Name" type="text" class="form-control" required>
+                                <input name="Name" type="text" class="form-control" value="${user.name}" required>
                             </div>
                             <div class="form-group">
                                 <label>Mobile</label>
-                                <input name="Mobile" type="text" class="form-control" required>
+                                <input name="Mobile" type="text" class="form-control" value="${user.mobile}" required>
                             </div>
 
                             <div class="form-gender">
                                 <label>
                                     Gender
                                 </label>
-                                <input type="radio" name="Gender" class="gender-radio" value="1" required>
-                                <label for="gender">
-                                    Male
-                                </label>
-                                <input type="radio" name="Gender" class="gender-radio" value="0" required>
-                                <label for="gender">
-                                    Female
-                                </label>
+                                </br>
+                                <c:if test="${user.gender == true}">
+                                    <input type="radio" name="Gender" class="gender-radio" value="1" required checked="">
+                                    <label for="gender">
+                                        Male
+                                    </label>
+                                    </br>
+                                    <input type="radio" name="Gender" class="gender-radio" value="0" required>
+                                    <label for="gender">
+                                        Female
+                                    </label>
+                                </c:if>
+                                <c:if test="${user.gender == false}">
+                                    <input type="radio" name="Gender" class="gender-radio" value="1" required>
+                                    <label for="gender">
+                                        Male
+                                    </label>
+                                    </br>
+                                    <input type="radio" name="Gender" class="gender-radio" value="0" required checked="">
+                                    <label for="gender">
+                                        Female
+                                    </label>
+                                </c:if>
                             </div>
                             <div class="form-group">
                                 <label>Address</label>
-                                <input name="Address" type="text" class="form-control" required>
+                                <input name="Address" type="text" class="form-control"  value="${user.address}" required>
                             </div>
                         </div>
                         <div class="modal-footer">

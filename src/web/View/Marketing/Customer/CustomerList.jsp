@@ -63,6 +63,7 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h5>List Customers</h5>
+                                            <a href="/src/marketing/addnewcustomer">  <input style="float: right" type="button" class="btn btn-primary" value="Add New Customer"></a>
                                         </div>
                                         <div class="card-header">
                                             <h5>Filter</h5>
@@ -75,15 +76,15 @@
                                                                    class="form-control" 
                                                                    id="author" 
                                                                    placeholder="Enter Full name" 
-                                                                   value="${requestScope.author}"
+                                                                   value="${requestScope.name}"
                                                                    name="name">
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label for="email">Email</label>
-                                                            <input type="email" class="form-control" 
+                                                            <input type="text" class="form-control" 
                                                                    id="email" 
                                                                    placeholder="Enter Email" 
-                                                                   value="${requestScope.title}"
+                                                                   value="${requestScope.email}"
                                                                    name="email">
                                                         </div>
                                                     </div>
@@ -94,19 +95,27 @@
                                                                    class="form-control" 
                                                                    id="mobile" 
                                                                    placeholder="Enter Mobile" 
-                                                                   value="${requestScope.author}"
+                                                                   value="${requestScope.mobile}"
                                                                    name="mobile">                  
                                                         </div> 
                                                         <div class="col-md-6">
                                                             <label for="status">Status</label>
                                                             <select class="form-control" name="status"> 
-                                                                <option value="1">Active</option>
-                                                                <option value="0">Deactive</option>
+                                                                <option value="1"
+                                                                        <c:if test="${requestScope.status==1}">
+                                                                            selected
+                                                                        </c:if>
+                                                                        >Active</option>
+                                                                <option value="0"
+                                                                        <c:if test="${requestScope.status==0}">
+                                                                            selected
+                                                                        </c:if>
+                                                                        >Deactive</option>
                                                             </select>
                                                         </div>                                                        
                                                     </div>
                                                     <button type="submit" class="btn btn-primary">Filter</button>
-                                                    <a href='/src/marketing/postlist' class="btn btn-danger">Clear all</a>  
+                                                    <a href='/src/marketing/customer' class="btn btn-danger">Clear all</a>  
                                                 </form>
                                             </div>
                                         </div>
@@ -125,7 +134,40 @@
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
-                                  
+                                                    <tbody>           
+                                                        <c:set var="i" value="0"></c:set>
+                                                        <c:forEach items="${requestScope.listCustomers}" var="c">
+                                                        <tr>
+                                                            <td>${i=i+1}</td>
+                                                            <td>${c.id}</td>
+                                                            <td>${c.name}</td>
+                                                            <td>
+                                                                <c:if test="${c.gender==true}">
+                                                                    Male
+                                                                </c:if>
+                                                                <c:if test="${c.gender==false}">
+                                                                    Female
+                                                                </c:if>
+                                                            </td>
+                                                            <td>${c.email}</td>
+                                                            <td>${c.mobile}</td>
+                                                            <td>
+                                                                <c:if test="${c.status == 1}">Active</c:if>
+                                                                 <c:if test="${c.status == 0}">Deactive</c:if>
+                                                            </td>
+                                                            <td>
+                                                                     <a href="/src/marketing/customerview?Id=${c.id}"><i class="fa fa-info-circle"></i></a>
+                                                                        <a href="/src/marketing/customeredit?Id=${c.id}"> <i class="fa fa-pencil"></i></a>
+                                                                        <a href="/src/marketing/changestatuspost?postID=${p.postID}&status=0">
+                                                                            <c:if test="${p.postStatus == true}"><i class="fa fa-eye"></i> </c:if> 
+                                                                        </a>
+                                                                        <a href="/src/marketing/changestatuspost?postID=${p.postID}&status=1">      
+                                                                            <c:if test="${p.postStatus == false}"><i class="fa fa-eye-slash"></i> </c:if>   
+                                                                        </a> 
+                                                            </td>
+                                                        </tr>
+                                                        </c:forEach>
+                                                    </tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -171,7 +213,6 @@
     }
     let keywordsPagging = ["page_index"];
     let configureUrl = ConfigureUrl(keywordsPagging);
-    console.log(configureUrl);
     pagger({
         id: 'pagination',
         pageindex: ${requestScope.page_index}, 
@@ -194,11 +235,6 @@
         if(window.location.href.includes("desc"))   link_data[i].href = configureUrlSort + "orderby="+link_data[i].id+"&direction=asc";
         else    link_data[i].href = configureUrlSort + "orderby="+link_data[i].id+"&direction=desc";
     }
-
-
-
-
-
 </script>
 
 </body>

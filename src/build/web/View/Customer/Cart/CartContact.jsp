@@ -68,8 +68,8 @@
             <div class="ps-hero__container">
                 <div class="ps-breadcrumb">
                     <ul class="breadcrumb">
-                        <li><a href="index-2.html">Home</a></li>
-                        <li>Shop Page</li>
+                        <li><a href="/src/homepage">Home</a></li>
+                        <li>Cart Contact</li>
                     </ul>
                 </div>
                 <h1 class="ps-hero__heading">Cart Contact</h1>

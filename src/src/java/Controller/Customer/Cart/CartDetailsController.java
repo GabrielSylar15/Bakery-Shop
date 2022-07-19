@@ -139,9 +139,9 @@ public class CartDetailsController extends HttpServlet {
             for (Map.Entry<Integer, Cart_Detail> entry : cartUser.getCarts().entrySet()) {
                 Integer key = entry.getKey();
                 Cart_Detail value = entry.getValue();
-                System.out.println(value);
+                
                 Product product = value.getProduct();
-                System.out.println(product);
+                
                 totalPrice += product.getPrice() * (1 - product.getDiscount()) * value.getQuantity();
 
             }

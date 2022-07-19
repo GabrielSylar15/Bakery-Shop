@@ -6,6 +6,7 @@
 package DAO;
 
 import Controller.Common.PasswordProcessingController;
+import Model.Customer_History;
 import Model.Feature;
 import Model.Role;
 import Model.User;
@@ -222,23 +223,21 @@ public class UserDAO extends DBContext {
     }
 
     public void UpdateUserInformation(String Name, String Mobile, boolean Gender, String Address, String Image, int Id) {
-        String sql = "UPDATE [dbo].[User]\n"
-                + "   SET [Name] = ?\n"
-                + "      ,[Mobile] = ?\n"
-                + "      ,[Gender] = ?\n"
-                + "      ,[Address] = ?\n";
-
-        if (!Image.equals("")) {
-            sql += "      ,[Image] = '" + Image + "'";
-        }
-        sql += " WHERE Id = ?";
+        String sql = "UPDATE [User]\n" +
+                    "   SET [Name] = ?\n" +
+                    "      ,[Mobile] = ?\n" +
+                    "      ,[Gender] = ?\n" +
+                    "      ,[Image] = ?\n" +
+                    "      ,[address] = ?\n" +
+                    " WHERE Id = ?";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setString(1, Name);
             stm.setString(2, Mobile);
             stm.setBoolean(3, Gender);
-            stm.setString(4, Address);
-            stm.setInt(5, Id);
+            stm.setString(4, Image);
+            stm.setString(5, Address);
+            stm.setInt(6, Id);
             stm.executeUpdate();
         } catch (Exception ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -548,8 +547,10 @@ public class UserDAO extends DBContext {
             int index = 1;
             if (!orderBy.equals("")) {
                 sql += (orderBy + " " + direction);
+            } else {
+                sql += (orderBy + "Id" + direction);
             }
-            sql += ") as row_index from [User] where roleid=4) as tbl where (1=1) ";
+            sql += ") as row_index from [User] where roleid=4 ";
             if (!fullname.equals("")) {
                 sql += " and Name like ? ";
                 params.put(index, fullname);
@@ -570,7 +571,7 @@ public class UserDAO extends DBContext {
                 params.put(index, status);
                 index += 1;
             }
-            sql += "and row_index>=?*(?-1)+1 and row_index<=?*? ";
+            sql += ") as tbl where (1=1) and row_index>=?*(?-1)+1 and row_index<=?*? ";
             PreparedStatement st = connection.prepareStatement(sql);
 
             for (Map.Entry<Integer, Object> entry : params.entrySet()) {
@@ -599,10 +600,12 @@ public class UserDAO extends DBContext {
                 a.setGender(rs.getBoolean("gender"));
                 a.setImage(rs.getString("image"));
                 a.setToken(rs.getString("token"));
+                a.setStatus(rs.getInt("statusID"));
                 a.setExpirationToken(rs.getString("expiration"));
                 a.setAddress(rs.getString("address"));
                 listCustomers.add(a);
             }
+            System.out.println(sql);
             return listCustomers;
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -610,7 +613,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public int getNumberOfRecords(int page_index, int page_size, String fullname, String email, String mobile, int status) {
+    public int getNumberOfRecords(String fullname, String email, String mobile, int status) {
         try {
             String sql = "select COUNT(*) as total from (select *, ROW_NUMBER()  OVER(order by Email asc) as row_index from [User] where roleid=4) as tbl where (1=1) ";
             Hashtable<Integer, Object> params = new Hashtable<>();
@@ -650,19 +653,236 @@ public class UserDAO extends DBContext {
             while (rs.next()) {
                 return rs.getInt("total");
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return -1;
     }
 
+    public int getCountCusByDate(String from, String to) {
+        int total = 0;
+        try {
+            String sql = "select count(Id) from [User]\n"
+                    + "where dateCreated > = ? and dateCreated < = ? ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+        }
+        return total;
+    }
+
+    public int getTotalCustomer() {
+        try {
+            String sql = "select COUNT(Id) from [User]";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public int getCountCustomersInRange(String roleid, String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count( *) \n"
+                    + "FROM [User] u inner join [Role] r on u.RoleID = r.RoleID \n"
+                    + "where u.roleid = ? and dateCreated between ? and ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, roleid);
+            stm.setString(2, before);
+            stm.setString(3, then);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountCustomerInRange(String status, String roleid, String before, String then) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*) \n"
+                    + "FROM [User] u inner join [Role] r on u.RoleID = r.RoleID \n"
+                    + "inner join User_Status us on u.StatusID = us.UserStatusID\n"
+                    + "where u.roleid = ? and dateCreated between ? and ? and StatusID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, roleid);
+            stm.setString(2, before);
+            stm.setString(3, then);
+            stm.setString(4, status);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountCustomers(int role) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "FROM [User] u inner join [Role] r \n"
+                    + "on u.RoleID = r.RoleID\n"
+                    + "where u.roleid = ? ";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, role);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
+    public int getCountCustomersByDate(String date, String role) {
+        int n = 0;
+        try {
+            String sql = "SELECT count(*)\n"
+                    + "  from [User]\n"
+                    + "  where RoleID = ?\n"
+                    + "  and dateCreated = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, role);
+            stm.setString(2, date);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+
     public static void main(String[] args) {
         UserDAO udb = new UserDAO();
-        List<User> listUsers = udb.getListCustomers(1, 8, "", "", "", -1, "Email", "desc");
+        List<User> listUsers = udb.getListCustomers(1, 3, "", "", "", 1, "Email", "desc");
         for (User listUser : listUsers) {
             System.out.println(listUser);
         }
-        System.out.println(udb.getNumberOfRecords(1, 8, "", "", "", -1));
+        System.out.println(udb.getNumberOfRecords("", "", "", 1));
+    }
+            // add new customer
+    public int AddNewCustomer(String Email, String Name, String Mobile, boolean Gender, String address) {
+        int n = 0;
+        String sql = "INSERT INTO [dbo].[User]\n"
+                + "           ([Email]\n"
+                + "           ,[Password]\n"
+                + "           ,[RoleID]\n"
+                + "           ,[Name]\n"
+                + "           ,[Mobile]\n"
+                + "           ,[Gender]\n"
+                + "           ,[address]\n"
+                + "           ,[StatusID])\n"
+                + "     VALUES\n"
+                + "           (?,'123456',4,?,?,?,?,1)";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, Email);
+            stm.setString(2, Name);
+            stm.setString(3, Mobile);
+            stm.setBoolean(4, Gender);
+            stm.setString(5, address);
+            n = stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+            //update information of customer
+    public void UpdateCustomer(String Name, boolean Gender, String Email, String Mobile, String Address, int Id) {
+        String sql = "UPDATE [dbo].[User]\n"
+                + "   SET [Name] = ?\n"
+                + "      ,[Gender] = ?\n"
+                + "	  ,[Email] = ?\n"
+                + "	  ,[Mobile] = ?\n"
+                + "      ,[address] = ?\n"
+                + "      ,[StatusID] = 1\n"
+                + " WHERE Id = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, Name);
+            stm.setBoolean(2, Gender);
+            stm.setString(3, Email);
+            stm.setString(4, Mobile);
+            stm.setString(5, Address);
+            stm.setInt(6, Id);
+            stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+            //insert customer change history
+    public int InsertCustomerChangesHistory(int id, String email, String name, boolean gender, String mobile, String address) {
+        int n = 0;
+        String sql = "INSERT INTO [dbo].[Customer_Changes_History]\n"
+                + "           ([Id]\n"
+                + "           ,[Email]\n"
+                + "           ,[Name]\n"
+                + "           ,[Gender]\n"
+                + "           ,[Mobile]\n"
+                + "           ,[address]\n"
+                + "           ,[UpdateBy]\n"
+                + "           ,[UpdateDate])\n"
+                + "     VALUES\n"
+                + "           (?,?,?,?,?,?,'nam',GETDATE())";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            stm.setString(2, email);
+            stm.setString(3, name);
+            stm.setBoolean(4, gender);
+            stm.setString(5, mobile);
+            stm.setString(6, address);
+            n = stm.executeUpdate();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return n;
+    }
+         //get list customer change history
+    public List<Customer_History> getAllCustomerHistoryByID(int id) {
+        List<Customer_History> ls = new ArrayList<>();
+        try {
+            String sql = "  select * from Customer_Changes_History where Id = ?\n"
+                    + "  order by UpdateDate desc";
+            PreparedStatement stm = connection.prepareCall(sql);
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Customer_History user = new Customer_History();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setGender(rs.getBoolean("gender"));
+                user.setEmail(rs.getString("email"));
+                user.setMobile(rs.getString("mobile"));
+                user.setAddress(rs.getString("address"));
+                user.setUpdateby(rs.getString("updateby"));
+                user.setUpdateDate(rs.getDate("updateDate"));
+                ls.add(user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ls;
     }
 }

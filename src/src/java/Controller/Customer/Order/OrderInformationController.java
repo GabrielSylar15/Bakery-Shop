@@ -114,7 +114,6 @@ public class OrderInformationController extends HttpServlet {
             }
             listProduct = Pdao.getListProductByCidPaging(true, keywordInt, page, PAZE_SIZE);
             session.setAttribute("backUrl", "productlist?categorykeyword=" + ckeyword);
-            System.out.println("ckeyword!!!=null");
         } //check list search by name exist and pagging
         else if (urlkeyword != null) {
             totalProduct = Pdao.getTotalProductBySearchName(true, urlkeyword);
@@ -124,7 +123,6 @@ public class OrderInformationController extends HttpServlet {
             }
             listProduct = Pdao.getListProductBySearchNamePaging(true, urlkeyword, page, PAZE_SIZE);
             session.setAttribute("backUrl", "productlist?searchkeyword=" + urlkeyword);
-            System.out.println("keyword!=null");
             //all product list and pagging
         } else {
             listProduct = Pdao.getListProductPaging(true, page, PAZE_SIZE);
@@ -134,8 +132,6 @@ public class OrderInformationController extends HttpServlet {
             if (to != 0) {
                 endPage += 1;
             }
-            session.setAttribute("backUrl", "productlist?page=" + page);
-            System.out.println("keyword==null");
         }
 
         // get orderdetails by userid
@@ -154,21 +150,20 @@ public class OrderInformationController extends HttpServlet {
         request.setAttribute("order", order);
 
         //get User Information 
-        UserDAO ud = new UserDAO();
+//        UserDAO ud = new UserDAO();
+//        User u = ud.GetUserProfileById(2);
         request.setAttribute("user", u);
 
         //get total money
         float totalMoney = 0;
         for (Order_Details orderdetail : order_details) {
-            totalMoney += orderdetail.getPrice() - (orderdetail.getProductId().getDiscount() * orderdetail.getPrice())
-                    * orderdetail.getQuantity();
+            totalMoney += (orderdetail.getPrice() * (1-orderdetail.getDiscount())
+                    * orderdetail.getQuantity());
         }
         order.setTotalMoney(totalMoney);
-
         //
         request.setAttribute("categorykeyword", ckeyword);
         request.setAttribute("searchkeyword", urlkeyword);
-
         request.setAttribute("page", page);
         request.setAttribute("endPage", endPage);
         request.setAttribute("totalProduct", totalProduct);
@@ -177,7 +172,6 @@ public class OrderInformationController extends HttpServlet {
         session.setAttribute("listCategory", listCategory);
         request.setAttribute("listProduct", listProduct);
         request.setAttribute("topProduct", topProduct);
-
         //  response.getWriter().print(order_details);
         request.getRequestDispatcher("/View/Customer/Order/OrderInformation.jsp").forward(request, response);
     }
@@ -193,14 +187,13 @@ public class OrderInformationController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        int OrderID = Integer.parseInt(request.getParameter("OrderID"));
-//        response.getWriter().print(OrderID);
+        HttpSession session = request.getSession();
+        int orderId = Integer.parseInt(request.getParameter("OrderID"));
         OrderDAO od = new OrderDAO();
-        OrderDetailsDAO odd = new OrderDetailsDAO();
-        //        odd.DeleteOrderDetails(OrderID);
-        //        od.DeleteOrder(OrderID);
-        request.setAttribute("mess", "Cancel success");
-        request.getRequestDispatcher("../View/Homepage.jsp").forward(request, response);
+        od.CancelOrder(orderId);
+        session.setAttribute("mess", "CanCel Order Successfull");
+        response.sendRedirect("/src/order/orderinformation?OrderID="+orderId);
+        
 
     }
 

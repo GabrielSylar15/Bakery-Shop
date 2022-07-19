@@ -234,6 +234,50 @@
         <servlet-name>CustomerList</servlet-name>
         <servlet-class>Controller.Marketing.Customer.CustomerList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminDashboard</servlet-name>
+        <servlet-class>Controller.Admin.Dashboard.AdminDashboard</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MKTDashboardController</servlet-name>
+        <servlet-class>Controller.Marketing.Dashboard.MKTDashboardController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateUserProfileController</servlet-name>
+        <servlet-class>Controller.Customer.Account.UpdateUserProfileController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddToCartFromOrder</servlet-name>
+        <servlet-class>Controller.Customer.Order.AddToCartFromOrder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteProductOrder</servlet-name>
+        <servlet-class>Controller.Customer.Order.DeleteProductOrder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderDetailsController</servlet-name>
+        <servlet-class>Controller.Customer.Order.OrderDetailsController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateOrderController</servlet-name>
+        <servlet-class>Controller.Customer.Order.UpdateOrderController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateQuantityOrderController</servlet-name>
+        <servlet-class>Controller.Customer.Order.UpdateQuantityOrderController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddNewCustomer</servlet-name>
+        <servlet-class>Controller.Marketing.Customer.AddNewCustomer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditCustomer</servlet-name>
+        <servlet-class>Controller.Marketing.Customer.EditCustomer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewCustomer</servlet-name>
+        <servlet-class>Controller.Marketing.Customer.ViewCustomer</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateUserInformation</servlet-name>
         <url-pattern>/user/updateuserinformation</url-pattern>
@@ -453,6 +497,50 @@
     <servlet-mapping>
         <servlet-name>CustomerList</servlet-name>
         <url-pattern>/marketing/customer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashboard</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MKTDashboardController</servlet-name>
+        <url-pattern>/marketing/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateUserProfileController</servlet-name>
+        <url-pattern>/account/updateuserprofile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddToCartFromOrder</servlet-name>
+        <url-pattern>/order/addtocart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteProductOrder</servlet-name>
+        <url-pattern>/order/deleteproductorder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderDetailsController</servlet-name>
+        <url-pattern>/order/orderdetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateOrderController</servlet-name>
+        <url-pattern>/order/updateorder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateQuantityOrderController</servlet-name>
+        <url-pattern>/order/updatequantity</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddNewCustomer</servlet-name>
+        <url-pattern>/marketing/addnewcustomer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCustomer</servlet-name>
+        <url-pattern>/marketing/customeredit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCustomer</servlet-name>
+        <url-pattern>/marketing/customerview</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

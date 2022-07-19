@@ -35,11 +35,11 @@
                     <ul class="nav pcoded-inner-navbar">
 
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                            <a href="/src/admin/dashboard" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                         </li>
 
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="#!" class="nav-link"><span class="pcoded-micon"><i class="fa fa-tasks"></i></span><span class="pcoded-mtext">Componant</span></a>
+                            <a href="" class="nav-link"><span class="pcoded-micon"><i class="fa fa-tasks"></i></span><span class="pcoded-mtext">Componant</span></a>
                             <ul class="pcoded-submenu">
 
                                 <c:if test="${sessionScope.user.roleID eq 3}">

@@ -29,7 +29,7 @@
                 <div class="ps-hero__container">
                     <div class="ps-breadcrumb">
                         <ul class="breadcrumb">
-                            <li><a href="/src/comment/homepage">Home</a></li>
+                            <li><a href="/src/homepage">Home</a></li>
                             <li>Blog Grid</li>
                         </ul>
                     </div>

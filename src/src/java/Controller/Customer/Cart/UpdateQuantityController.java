@@ -43,17 +43,13 @@ public class UpdateQuantityController extends HttpServlet {
         Cart_DetailDAO cddao = new Cart_DetailDAO();
         int maxQuantity = cddao.getMaxQuantityByProDuctId(productId, cartUser.getCartID());
         if (cartUser.getCarts().containsKey(productId)) {
-            if(quantity <= 0){
-                cddao.UpdateCartDetailNegative(productId, cartUser.getCartID());
-            }
-            else if(quantity > maxQuantity){
+            if (quantity > maxQuantity) {
                 cddao.UpdateCartDetail(productId, cartUser.getCartID(), maxQuantity);
-            }
-            else{
-            cddao.UpdateCartDetail(productId, cartUser.getCartID(),quantity);
+            } else {
+                cddao.UpdateCartDetail(productId, cartUser.getCartID(), quantity);
             }
         }
-        
+
         response.sendRedirect("/src/customer/cartdetails");
     }
 
